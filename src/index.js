@@ -1,4 +1,4 @@
-import React from "react";
+import React, { Component } from "react";
 import ReactDom from "react-dom";
 
 import TodoList from "./components/todo-list";
@@ -9,26 +9,33 @@ import TodoInfo from "./components/todo-info";
 
 import "./index.css";
 
-const App = () => {
-  const todoDate = [
-    { label: "drink tea", important: true, id: 12 },
-    { label: "drink juce", important: false, id: 21 },
-    { label: "make tea", important: false, id: 2 }
-  ];
-  return (
-    <div className="todo-wrapper">
-      <TodoTitle />
-      <TodoInfo />
-      <TodoSearch />
-      <TodoListFilter />
-      <TodoList
-        onDeleted={id => {
-          console.log("deleted ", id);
-        }}
-        todos={todoDate}
-      />
-    </div>
-  );
-};
-
+export default class App extends Component {
+  state = {
+    todoDate: [
+      { label: "drink tea", important: true, id: 12 },
+      { label: "drink juce", important: false, id: 21 },
+      { label: "make tea", important: false, id: 2 }
+    ]
+  };
+  deleteItem = () => {
+    this.setState(({todoDate}) => {
+      todoDate.pop();
+      return {
+        todoDate:todoDate
+      };
+    });
+  };
+  render() {
+    const { todoDate } = this.state;
+    return (
+      <div className="todo-wrapper">
+        <TodoTitle />
+        <TodoInfo />
+        <TodoSearch />
+        <TodoListFilter />
+        <TodoList onDeleted={this.deleteItem} todos={todoDate} />
+      </div>
+    );
+  }
+}
 ReactDom.render(<App />, document.querySelector("#root"));
