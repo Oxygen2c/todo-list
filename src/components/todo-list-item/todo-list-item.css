@@ -1,6 +1,9 @@
 .todo-list-item {
   display: flex;
 }
+.todo-list-item span {
+  cursor: pointer;
+}
 .todo-list-item-title {
   width: 100%;
 }
@@ -10,4 +13,13 @@
   border: 1px solid #222;
   margin: 0 5px;
   border-radius: 3px;
+}
+.done span {
+  text-decoration: line-through;
+}
+.important span {
+  font-weight: bold;
+}
+button {
+  cursor: pointer;
 }

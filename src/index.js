@@ -3,7 +3,7 @@ import ReactDom from "react-dom";
 
 import TodoList from "./components/todo-list";
 import TodoSearch from "./components/todo-search";
-import TodoTitle from "./components/todo-title";
+import TodoTitle from "./components/todo-title/todo-title";
 import TodoListFilter from "./components/todo-list-filter";
 import TodoInfo from "./components/todo-info";
 
@@ -21,7 +21,12 @@ const App = () => {
       <TodoInfo />
       <TodoSearch />
       <TodoListFilter />
-      <TodoList todos={todoDate} />
+      <TodoList
+        onDeleted={id => {
+          console.log("deleted ", id);
+        }}
+        todos={todoDate}
+      />
     </div>
   );
 };
