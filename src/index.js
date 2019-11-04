@@ -6,25 +6,40 @@ import TodoSearch from "./components/todo-search";
 import TodoTitle from "./components/todo-title/todo-title";
 import TodoListFilter from "./components/todo-list-filter";
 import TodoInfo from "./components/todo-info";
+import TodoAddItem from "./components/todo-add-item";
 
 import "./index.css";
 
 export default class App extends Component {
   state = {
     todoDate: [
-      { label: "drink tea", important: true, id: 12 },
-      { label: "drink juce", important: false, id: 21 },
-      { label: "make tea", important: false, id: 2 }
+      { label: "drink tea", important: true, id: 1 },
+      { label: "drink juce", important: false, id: 2 },
+      { label: "make tea", important: false, id: 3 },
+      { label: "m tea", important: false, id: 4 }
     ]
   };
-  deleteItem = () => {
-    this.setState(({todoDate}) => {
-      todoDate.pop();
+
+  deleteItem = id => {
+    this.setState(({ todoDate }) => {
+      const indx = todoDate.findIndex(el => {
+        return el.id === id;
+      });
+
+      const newArray = [
+        ...todoDate.slice(0, indx),
+        ...todoDate.slice(indx + 1)
+      ];
       return {
-        todoDate:todoDate
+        todoDate: newArray
       };
     });
   };
+
+  addItem = () => {
+    console.log("dsds");
+  };
+
   render() {
     const { todoDate } = this.state;
     return (
@@ -34,6 +49,7 @@ export default class App extends Component {
         <TodoSearch />
         <TodoListFilter />
         <TodoList onDeleted={this.deleteItem} todos={todoDate} />
+        <TodoAddItem onAdd={this.addItem} />
       </div>
     );
   }
