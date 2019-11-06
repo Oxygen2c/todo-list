@@ -11,14 +11,23 @@ import TodoAddItem from "./components/todo-add-item";
 import "./index.css";
 
 export default class App extends Component {
+  maxId = 100;
   state = {
     todoDate: [
-      { label: "drink tea", important: true, id: 1 },
-      { label: "drink juce", important: false, id: 2 },
-      { label: "make tea", important: false, id: 3 },
-      { label: "m tea", important: false, id: 4 }
+      this.createItem("drink tea"),
+      this.createItem("drink juce"),
+      this.createItem("drink tea")
     ]
   };
+
+  createItem(label) {
+    return {
+      label,
+      important: false,
+      done: false,
+      id: this.maxId++
+    };
+  }
 
   deleteItem = id => {
     this.setState(({ todoDate }) => {
@@ -36,8 +45,56 @@ export default class App extends Component {
     });
   };
 
-  addItem = () => {
-    console.log("dsds");
+  addItem = text => {
+    this.setState(({ todoDate }) => {
+      const newArray = [...todoDate, this.createItem(text)];
+      return {
+        todoDate: newArray
+      };
+    });
+  };
+
+  onToggleDone = id => {
+    this.setState(({ todoDate }) => {
+      const indx = todoDate.findIndex(el => {
+        return el.id === id;
+      });
+      const newArray = [...todoDate];
+      newArray[indx].done = !newArray[indx].done;
+      return {
+        todoDate: newArray
+      };
+    });
+  };
+  // onToggleImportant = id => {
+  //   this.setState(({ todoDate }) => {
+  //     const indx = todoDate.findIndex(el => {
+  //       return el.id === id;
+  //     });
+  //     const newArray = [...todoDate];
+  //     newArray[indx].important = !newArray[indx].important;
+  //     return {
+  //       todoDate: newArray
+  //     };
+  //   });
+  // };
+
+  onToggleImportant = id => {
+    this.setState(({ todoDate }) => {
+      const indx = todoDate.findIndex(el => {
+        return el.id === id;
+      });
+      const oldItem = todoDate[indx];
+      const newItem = { ...oldItem, important: !oldItem.important };
+      const newArray = [
+        ...todoDate.slice(0, indx),
+        newItem,
+        ...todoDate.slice(indx + 1)
+      ];
+      return {
+        todoDate: newArray
+      };
+    });
   };
 
   render() {
@@ -48,7 +105,12 @@ export default class App extends Component {
         <TodoInfo />
         <TodoSearch />
         <TodoListFilter />
-        <TodoList onDeleted={this.deleteItem} todos={todoDate} />
+        <TodoList
+          onDeleted={this.deleteItem}
+          todos={todoDate}
+          onToggleDone={this.onToggleDone}
+          onToggleImportant={this.onToggleImportant}
+        />
         <TodoAddItem onAdd={this.addItem} />
       </div>
     );
