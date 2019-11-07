@@ -19,7 +19,6 @@ export default class App extends Component {
       this.createItem("drink tea")
     ]
   };
-
   createItem(label) {
     return {
       label,
@@ -47,62 +46,86 @@ export default class App extends Component {
 
   addItem = text => {
     this.setState(({ todoDate }) => {
-      const newArray = [...todoDate, this.createItem(text)];
+      let hist = todoDate;
+      console.log(hist);
+      
       return {
-        todoDate: newArray
+        todoDate: [...todoDate, this.createItem(text)]
       };
+    });
+  };
+
+  toggleProperty = (arr, id, propName) => {
+    return [...arr].map(item => {
+      if (item.id === id) item[propName] = !item[propName];
+      return item;
     });
   };
 
   onToggleDone = id => {
     this.setState(({ todoDate }) => {
-      const indx = todoDate.findIndex(el => {
-        return el.id === id;
-      });
-      const newArray = [...todoDate];
-      newArray[indx].done = !newArray[indx].done;
       return {
-        todoDate: newArray
+        todoDate: this.toggleProperty(todoDate, id, "done")
       };
     });
   };
+
+  onToggleImportant = id => {
+    this.setState(({ todoDate }) => {
+      return {
+        todoDate: this.toggleProperty(todoDate, id, "important")
+      };
+    });
+  };
+
+  // onToggleImportant = idClick => {
+  //   console.log(Array.isArray([...this.state.todoDate]))
+  //   console.log(this.state.todoDate == [...this.state.todoDate])
+  //   this.setState({
+  //     todoDate: [...this.state.todoDate].filter((item, index) => {
+  //       if(item.id === idClick) item.important = !item.important;
+  //       return true
+  //     })
+  //   })
+
   // onToggleImportant = id => {
   //   this.setState(({ todoDate }) => {
   //     const indx = todoDate.findIndex(el => {
   //       return el.id === id;
   //     });
-  //     const newArray = [...todoDate];
-  //     newArray[indx].important = !newArray[indx].important;
+  //     const oldItem = todoDate[indx];
+  //     const newItem = { ...oldItem, important: !oldItem.important };
+  //     const newArray = [
+  //       ...todoDate.slice(0, indx),
+  //       newItem,
+  //       ...todoDate.slice(indx + 1)
+  //     ];
   //     return {
   //       todoDate: newArray
   //     };
   //   });
   // };
 
-  onToggleImportant = id => {
-    this.setState(({ todoDate }) => {
-      const indx = todoDate.findIndex(el => {
-        return el.id === id;
-      });
-      const oldItem = todoDate[indx];
-      const newItem = { ...oldItem, important: !oldItem.important };
-      const newArray = [
-        ...todoDate.slice(0, indx),
-        newItem,
-        ...todoDate.slice(indx + 1)
-      ];
-      return {
-        todoDate: newArray
-      };
-    });
-  };
-
   render() {
     const { todoDate } = this.state;
+    const done = [...todoDate].filter(el => el.done).length;
+    const todo = [...todoDate].length - done;
+
+    // let obj = {
+    //   undone: 0,
+    //   done: 0
+    // };
+
+    // (() => {
+    //   [...this.state.todoDate].forEach(item => {
+    //     (item.done) ? obj.done++ : obj.undone++
+    //   })
+    // })()
+
     return (
       <div className="todo-wrapper">
         <TodoTitle />
-        <TodoInfo />
+        <TodoInfo todo={todo} done={done} />
         <TodoSearch />
         <TodoListFilter />
         <TodoList
