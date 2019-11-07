@@ -16,7 +16,7 @@ export default class App extends Component {
     todoDate: [
       this.createItem("drink tea"),
       this.createItem("drink juce"),
-      this.createItem("drink tea")
+      this.createItem("p")
     ]
   };
   createItem(label) {
@@ -48,7 +48,7 @@ export default class App extends Component {
     this.setState(({ todoDate }) => {
       let hist = todoDate;
       console.log(hist);
-      
+
       return {
         todoDate: [...todoDate, this.createItem(text)]
       };
@@ -106,6 +106,38 @@ export default class App extends Component {
   //   });
   // };
 
+  onSearch = e => {
+    const inputValue = e.target.value;
+    const oldState = this.state.todoDate;
+    const filtered = [];
+    const notfiltered = [];
+
+    const filteredTodo = [...this.state.todoDate].filter((item, ind, arr) => {
+      if (item.label.includes(inputValue) && inputValue.length > 0) {
+        filtered.push(item);
+      } else {
+        notfiltered.push(item);
+      }
+      return true;
+    });
+
+    // const filteredArray = [...this.state.todoDate].map((item, ind, arr) => {
+    //   if (item.label.includes(inputValue) && inputValue.length > 0) {
+    //     arr.splice(ind, 1, 0);
+    //     // console.log(arr);
+    //   }
+    //   return item;
+    // });
+    console.log(filtered);
+    console.log(notfiltered);
+
+    // this.setState(({ todoDate }) => {
+    //   return {
+    //     todoDate: filtered
+    //   };
+    // });
+  };
+
   render() {
     const { todoDate } = this.state;
     const done = [...todoDate].filter(el => el.done).length;
@@ -126,7 +158,7 @@ export default class App extends Component {
       <div className="todo-wrapper">
         <TodoTitle />
         <TodoInfo todo={todo} done={done} />
-        <TodoSearch />
+        <TodoSearch todos={todoDate} onSearch={this.onSearch} />
         <TodoListFilter />
         <TodoList
           onDeleted={this.deleteItem}
