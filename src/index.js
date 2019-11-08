@@ -17,7 +17,8 @@ export default class App extends Component {
       this.createItem("drink tea"),
       this.createItem("drink juce"),
       this.createItem("p")
-    ]
+    ],
+    str: ''
   };
   createItem(label) {
     return {
@@ -105,44 +106,25 @@ export default class App extends Component {
   //     };
   //   });
   // };
-
-  onSearch = e => {
-    const inputValue = e.target.value;
-    const oldState = this.state.todoDate;
-    const filtered = [];
-    const notfiltered = [];
-
-    const filteredTodo = [...this.state.todoDate].filter((item, ind, arr) => {
-      if (item.label.includes(inputValue) && inputValue.length > 0) {
-        filtered.push(item);
-      } else {
-        notfiltered.push(item);
-      }
-      return true;
-    });
-
-    // const filteredArray = [...this.state.todoDate].map((item, ind, arr) => {
-    //   if (item.label.includes(inputValue) && inputValue.length > 0) {
-    //     arr.splice(ind, 1, 0);
-    //     // console.log(arr);
-    //   }
-    //   return item;
-    // });
-    console.log(filtered);
-    console.log(notfiltered);
-
-    // this.setState(({ todoDate }) => {
-    //   return {
-    //     todoDate: filtered
-    //   };
-    // });
+  onSearch = (str) => {
+    console.log(str)
+    str = str.target.value
+    this.setState({str})
+  };
+  filteredFunc = (state, str) => {
+    if(!str.length) return [...state];
+    return [...state].filter((item) => {
+      return item.label.indexOf(str) > -1
+    })
   };
 
   render() {
-    const { todoDate } = this.state;
+    const { todoDate, str } = this.state;
     const done = [...todoDate].filter(el => el.done).length;
     const todo = [...todoDate].length - done;
+    const searchableArr = this.filteredFunc(todoDate, str)
 
+    
     // let obj = {
     //   undone: 0,
     //   done: 0
@@ -162,7 +144,7 @@ export default class App extends Component {
         <TodoListFilter />
         <TodoList
           onDeleted={this.deleteItem}
-          todos={todoDate}
+          todos={searchableArr}
           onToggleDone={this.onToggleDone}
           onToggleImportant={this.onToggleImportant}
         />
