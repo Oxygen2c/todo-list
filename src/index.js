@@ -14,17 +14,18 @@ export default class App extends Component {
   maxId = 100;
   state = {
     todoDate: [
-      this.createItem("drink tea"),
-      this.createItem("drink juce"),
-      this.createItem("p")
+      this.createItem("drink tea", true, false),
+      this.createItem("drink juce", false, false),
+      this.createItem("p", true, false)
     ],
-    str: ''
+    str: "",
+    filter: "Done"
   };
-  createItem(label) {
+  createItem(label, isDone, isImportant) {
     return {
       label,
-      important: false,
-      done: false,
+      important: isImportant,
+      done: isDone,
       id: this.maxId++
     };
   }
@@ -47,9 +48,6 @@ export default class App extends Component {
 
   addItem = text => {
     this.setState(({ todoDate }) => {
-      let hist = todoDate;
-      console.log(hist);
-
       return {
         todoDate: [...todoDate, this.createItem(text)]
       };
@@ -80,8 +78,6 @@ export default class App extends Component {
   };
 
   // onToggleImportant = idClick => {
-  //   console.log(Array.isArray([...this.state.todoDate]))
-  //   console.log(this.state.todoDate == [...this.state.todoDate])
   //   this.setState({
   //     todoDate: [...this.state.todoDate].filter((item, index) => {
   //       if(item.id === idClick) item.important = !item.important;
@@ -106,42 +102,54 @@ export default class App extends Component {
   //     };
   //   });
   // };
-  onSearch = (str) => {
-    console.log(str)
-    str = str.target.value
-    this.setState({str})
+
+  onSearchChange = str => {
+    str = str.target.value;
+    this.setState({ str });
   };
-  filteredFunc = (state, str) => {
-    if(!str.length) return [...state];
-    return [...state].filter((item) => {
-      return item.label.indexOf(str) > -1
-    })
+
+  onFilterChange = filter => {
+    this.setState({
+      filter
+    });
+  };
+
+  filteredFunc = (todoDate, str) => {
+    if (!str.length) return [...todoDate];
+    return [...todoDate].filter(item => {
+      return item.label.indexOf(str) > -1;
+    });
+  };
+
+  filter = (itemsArr, filter) => {
+    switch (filter) {
+      case "All":
+        return itemsArr;
+      case "Active":
+        return itemsArr.filter(item => {
+          return !item.done;
+        });
+      case "Done":
+        return itemsArr.filter(item => {
+          return item.done;
+        });
+      default:
+        return itemsArr;
+    }
   };
 
   render() {
-    const { todoDate, str } = this.state;
+    const { todoDate, str, filter } = this.state;
     const done = [...todoDate].filter(el => el.done).length;
     const todo = [...todoDate].length - done;
-    const searchableArr = this.filteredFunc(todoDate, str)
-
-    
-    // let obj = {
-    //   undone: 0,
-    //   done: 0
-    // };
-
-    // (() => {
-    //   [...this.state.todoDate].forEach(item => {
-    //     (item.done) ? obj.done++ : obj.undone++
-    //   })
-    // })()
+    const searchableArr = this.filter(this.filteredFunc(todoDate, str), filter);
 
     return (
       <div className="todo-wrapper">
         <TodoTitle />
         <TodoInfo todo={todo} done={done} />
-        <TodoSearch todos={todoDate} onSearch={this.onSearch} />
-        <TodoListFilter />
+        <TodoSearch todos={todoDate} onSearchChange={this.onSearchChange} />
+        <TodoListFilter filter={filter} onFilterChange={this.onFilterChange} />
         <TodoList
           onDeleted={this.deleteItem}
           todos={searchableArr}

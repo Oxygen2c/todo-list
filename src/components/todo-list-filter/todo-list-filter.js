@@ -2,16 +2,30 @@ import React, { Component } from "react";
 import "./todo-list-filter.css";
 
 export default class TodoListFilter extends Component {
+  buttons = [
+    { name: "All", label: "All" },
+    { name: "Active", label: "Active" },
+    { name: "Done", label: "Done" }
+  ];
+
   render() {
-    return (
-      <div className="todo-list-filter btn-group">
+    const { filter, onFilterChange } = this.props;
+    const buttons = this.buttons.map(({ name, label }) => {
+      const isActive = filter === name;
+      const clazz = isActive ? "btn btn-info" : "btn btn-outline-secondary";
+      return (
         <button
-          className="btn btn-info">
-          All
+          className={clazz}
+          key={name}
+          onClick={() => {
+            onFilterChange(name);
+          }}
+        >
+          {label}
         </button>
-        <button className="btn btn-">Active</button>
-        <button className="btn btn-">Complete</button>
-      </div>
-    );
+      );
+    });
+
+    return <div className="todo-list-filter btn-group">{buttons}</div>;
   }
 }
